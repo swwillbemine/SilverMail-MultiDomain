@@ -32,7 +32,7 @@ domain_utama = "hyperbug.my.id"
 POSTFIX_VIRTUAL_MAILBOX = "/etc/postfix/virtual_mailbox"
 POSTFIX_VIRTUAL_ALIAS = "/etc/postfix/virtual_alias"
 
-# Daftar Nama (Hanya dari anime atau game bertema anime, serta nama manusia yang masuk akal)
+# Daftar Nama
 NAMES = [
     "naruto", "sasuke", "sakura", "kakashi", "hinata", "itachi", "gaara", "lee", "neji",
     "goku", "vegeta", "bulma", "piccolo", "frieza", "cell", "trunks", "gohan", "krillin", "yamcha",
@@ -42,24 +42,25 @@ NAMES = [
     "cloud", "tifa", "aerith", "barret", "sephiroth", "zack", "cid", "yuffie", "vincent", "redxiii",
     "linkko", "zelda", "ganon", "mario", "luigi", "peachella", "bowser", "yaoshi", "toad", "daisy",
     "sanchou", "ash", "misty", "brock", "gary", "jessie", "james", "meowth", "lucario", "eevee",
-    "dante", "vergil", "nero", "trish", "sparda", "vii", "bayonetta", "jeanne",
+    "dante", "vergil", "nero", "trish", "sparda", "vii", "bayonetta", "jeanne", "pardi", "sumito",
     "alucard", "trevor", "sylphia", "grant", "richter", "maria", "shanoa", "soma", "julius", "yoko",
     "ryuuji", "ken", "chunliv", "guilevin", "camelya", "nakuma", "sagato", "avega", "kane", "sakura",
     "subaru", "yae", "raiden", "liukang", "kitana", "mileena", "jax", "sonya", "kunglao", "baraka",
     "harry", "hermione", "ron", "dumbledore", "snape", "voldemort", "luna", "neville", "sirius", "bellatrix",
     "frodo", "gandalf", "aragorn", "legolas", "gimli", "boromir", "sam", "merry", "pippin", "sauron",
-    "jon", "sansa", "arya", "bran", "tyrion", "daenerys", "cersei", "jaime", "theon", "brienne","robin","misbah",
-    "hartono","supriyadi","sukarton","sumanto","sulastri","sukris","rusdi","amba","narji","sudarsono","suhendro",
-    "sumiyati","jarwo","sutik","suharto","anfal","niki","abil","rafi","aqil","suli","asep","conis","reinhard",
-    "sinaga","yotsuba","nagomi","ririsa","amano","kaori","gojo","venti","jean","mona","lisa","kamaru","norman",
-    "yakovlev","pavel","mikail","alisa","mikhailovna","kujou","yuki","suou","masha","kuze","alya","furina",
-    "neuvillete","nopal","navia","herta","nahida","nadia","solikin","yanto","nur","nurjannah","jannah",
-    "fatihuddin","munawwir","somad","somat","nurhadi","hadi","elsyafa","andre","maulaana","ade","saputra",
-    "safitri","misbahulharun","harun","izza","azizatul","zahra","anisya","aesyah","krisna","carly","reze",
-    "mahendra","anis","suprapto","chizuru","sora","ainz","pico","isla","souma","hanto","rudeus"
+    "jon", "sansa", "arya", "bran", "tyrion", "daenerys", "cersei", "jaime", "theon", "brienne", "robin", "misbah",
+    "hartono", "supriyadi", "sukarton", "sumanto", "sulastri", "sukris", "rusdi", "amba", "narji", "sudarsono",
+    "suhendro", "sumiyati", "jarwo", "sutik", "suharto", "anfal", "niki", "abil", "rafi", "aqil", "suli", "asep", "conis",
+    "reinhard", "sinaga", "yotsuba", "nagomi", "ririsa", "amano", "kaori", "gojo", "venti", "jean", "mona", "lisa",
+    "kamaru", "norman", "yakovlev", "pavel", "mikail", "alisa", "mikhailovna", "kujou", "yuki", "suou",
+    "masha", "kuze", "alya", "furina", "neuvillete", "nopal", "navia", "herta", "nahida", "nadia", "solikin", "yanto",
+    "nur", "nurjannah", "jannah", "fatihuddin", "munawwir", "somad", "somat", "nurhadi", "hadi", "elsyafa",
+    "andre", "maulaana", "ade", "saputra", "safitri", "misbahulharun", "harun", "izza", "azizatul", "zahra"
+    ,"anisya", "aesyah", "krisna", "carly", "reza", "mahendra", "anis", "suprapto", "chizuru", "sora","ainz",
+    "pico","isla","souma","hanto","rudeus", "suryo", "adrian", "handoyo", "salim", "kabul"
 ]
 
-# Set untuk menyimpan kombinasi nama dan angka yang sudah digunakan
+
 used_combinations = set()
 
 class EmailManager:
@@ -69,16 +70,9 @@ class EmailManager:
 
     def generate_username(self):
         while True:
-            # Pilih nama acak dari daftar
             name = random.choice(NAMES)
-            
-            # Tambahkan angka acak di belakang (2-3 digit)
             number = random.randint(100, 9999)
-            
-            # Gabungkan semuanya
             combination = f"{name}{number}"
-            
-            # Pastikan kombinasi belum pernah digunakan
             if combination not in used_combinations:
                 used_combinations.add(combination)
                 return combination
@@ -86,13 +80,13 @@ class EmailManager:
     def cleanup_previous_email(self):
         if self.current_email:
             try:
-                # Hapus konfigurasi Postfix
+                # Hapus email lama di Postfix
                 subprocess.run(f"sudo sed -i '/^{self.current_email}/d' {POSTFIX_VIRTUAL_MAILBOX}", 
                              shell=True, check=True)
                 subprocess.run(f"sudo sed -i '/^{self.current_email}/d' {POSTFIX_VIRTUAL_ALIAS}", 
                              shell=True, check=True)
                 
-                # Update Postfix
+                # Update data Postfix
                 subprocess.run("sudo postmap " + POSTFIX_VIRTUAL_MAILBOX, shell=True, check=True)
                 subprocess.run("sudo postmap " + POSTFIX_VIRTUAL_ALIAS, shell=True, check=True)
                 subprocess.run("sudo systemctl reload postfix", shell=True, check=True)
@@ -102,13 +96,12 @@ class EmailManager:
 
     def create_new_email(self):
         username = self.generate_username()
-        domain = random.choice(list(DOMAINS.keys()))  # Pilih domain secara acak
+        domain = random.choice(list(DOMAINS.keys()))
         new_email = f"{username}@{domain}"
         alias_email = f"{username}@{domain_utama}"
         self.mailbox_path = f"{DOMAINS[domain]['mail_dir']}/{username}"
         
         try:
-            # Buat direktori email
             os.makedirs(f"{self.mailbox_path}/new", exist_ok=True)
             os.makedirs(f"{self.mailbox_path}/cur", exist_ok=True)
             subprocess.run(f"sudo chown -R vmail:vmail {self.mailbox_path}", 
@@ -138,7 +131,7 @@ email_manager = EmailManager()
 
 @app.route('/')
 def index():
-    domain = request.host  # Ambil domain dari request
+    domain = request.host 
     if domain not in DOMAINS:
         return "Domain not supported", 404
     
@@ -148,7 +141,6 @@ def index():
 
 @app.route('/generate', methods=['POST'])
 def generate_email():
-    # Bersihkan email sebelumnya
     if 'current_email' in session:
         email_manager.current_email = session['current_email']
         email_manager.cleanup_previous_email()
@@ -179,7 +171,7 @@ def get_emails():
         
         for key in mbox.keys()[counter:]:
             msg = mbox[key]
-            body = extract_body(msg)  # Perubahan disini
+            body = extract_body(msg)
             
             emails.append({
                 'id': key,
@@ -197,8 +189,7 @@ def get_emails():
         app.logger.error(f"Mailbox error: {str(e)}")
         return jsonify([])
 
-# Fungsi extract_body yang diperbaiki
-def extract_body(msg):  # Tanpa parameter self
+def extract_body(msg): 
     body = ""
     if msg.is_multipart():
         for part in msg.walk():
