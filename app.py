@@ -26,6 +26,8 @@ DOMAINS = {
     }
 }
 
+domain_utama = "hyperbug.my.id"
+
 # Konfigurasi Postfix
 POSTFIX_VIRTUAL_MAILBOX = "/etc/postfix/virtual_mailbox"
 POSTFIX_VIRTUAL_ALIAS = "/etc/postfix/virtual_alias"
@@ -102,7 +104,7 @@ class EmailManager:
         username = self.generate_username()
         domain = random.choice(list(DOMAINS.keys()))  # Pilih domain secara acak
         new_email = f"{username}@{domain}"
-        alias_email = f"{username}@hyperbug.my.id"
+        alias_email = f"{username}@{domain_utama}"
         self.mailbox_path = f"{DOMAINS[domain]['mail_dir']}/{username}"
         
         try:
@@ -117,7 +119,7 @@ class EmailManager:
 
             # Update konfigurasi Postfix
             with open(POSTFIX_VIRTUAL_MAILBOX, "a") as f:
-                f.write(f"{alias_email}    hyperbug.my.id/{username}/\n")
+                f.write(f"{alias_email}    {domain_utama}/{username}/\n")
             with open(POSTFIX_VIRTUAL_ALIAS, "a") as f:
                 f.write(f"{new_email}    {alias_email}\n")
             
