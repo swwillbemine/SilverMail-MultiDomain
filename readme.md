@@ -1,5 +1,5 @@
 # SilverMail-MultiDomain
-![Logo](https://cdn.eula.my.id/silvermail_logo.png)
+![Logo](https://cdn.eula.my.id/silvermail_logo_fix.png)
 
 Aplikasi layanan email sementara berbasis Python dan berjalan di Ubuntu, server ini memerlukan IP Publik dan domain, SSL opsional. 
 
@@ -10,7 +10,7 @@ Ubuntu 22.04 or newer\
 8GB Storage or upper
 
 ## Demo
-[HyperBug](hyperbug.my.id)
+[HyperBug](http://hyperbug.my.id/)
 
 ## Installation
 ### 1. Clone Repository
