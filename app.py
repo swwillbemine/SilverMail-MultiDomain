@@ -1,64 +1,37 @@
 import os
+import json
 import random
 import subprocess
-import shutil
 import mailbox
+import ssl
+from dotenv import load_dotenv
 from datetime import datetime
-from flask import Flask, render_template, session, redirect, url_for, jsonify, request
+from flask import Flask, render_template, session, jsonify, request
+
+load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
-app.config['PERMANENT_SESSION_LIFETIME'] = 3600  # 1 jam
+app.config['PERMANENT_SESSION_LIFETIME'] = 1800  # 30 Menit/1800 Detik
 
-# Konfigurasi Domain
-DOMAINS = {
-    "hyperbug.my.id": {
-        "template": "hyperbug.html",
-        "mail_dir": "/var/mail/vhosts/hyperbug.my.id"
-    },
-    "coloros.hyperbug.my.id": {
-        "template": "hyperbug.html",
-        "mail_dir": "/var/mail/vhosts/hyperbug.my.id"
-    },
-    "funtouchos.hyperbug.my.id": {
-        "template": "hyperbug.html",
-        "mail_dir": "/var/mail/vhosts/hyperbug.my.id"
-    }
-}
+with open('assets/domains.json', 'r') as f:
+    DOMAINS = json.load(f)
 
-domain_utama = "hyperbug.my.id"
+if not isinstance(DOMAINS, list):
+    raise ValueError("File JSON harus list.")
 
-# Konfigurasi Postfix
-POSTFIX_VIRTUAL_MAILBOX = "/etc/postfix/virtual_mailbox"
-POSTFIX_VIRTUAL_ALIAS = "/etc/postfix/virtual_alias"
+domain_utama = os.getenv("MAIN_DOMAIN")
+use_ssl = os.getenv("USE_SSL")
 
-# Daftar Nama
-NAMES = [
-    "naruto", "sasuke", "sakura", "kakashi", "hinata", "itachi", "gaara", "lee", "neji",
-    "goku", "vegeta", "bulma", "piccolo", "frieza", "cell", "trunks", "gohan", "krillin", "yamcha",
-    "luffy", "zoro", "nami", "usopp", "sanji", "chopper", "robin", "franky", "brook", "jinbe",
-    "eren", "mikasa", "levi", "armin", "hange", "erwin", "reiner", "bertholdt", "annie", "ymir",
-    "kirito", "asuna", "klein", "agil", "sinon", "leafa", "yui", "eugeo", "alice", "admina",
-    "cloud", "tifa", "aerith", "barret", "sephiroth", "zack", "cid", "yuffie", "vincent", "redxiii",
-    "linkko", "zelda", "ganon", "mario", "luigi", "peachella", "bowser", "yaoshi", "toad", "daisy",
-    "sanchou", "ash", "misty", "brock", "gary", "jessie", "james", "meowth", "lucario", "eevee",
-    "dante", "vergil", "nero", "trish", "sparda", "vii", "bayonetta", "jeanne", "pardi", "sumito",
-    "alucard", "trevor", "sylphia", "grant", "richter", "maria", "shanoa", "soma", "julius", "yoko",
-    "ryuuji", "ken", "chunliv", "guilevin", "camelya", "nakuma", "sagato", "avega", "kane", "sakura",
-    "subaru", "yae", "raiden", "liukang", "kitana", "mileena", "jax", "sonya", "kunglao", "baraka",
-    "harry", "hermione", "ron", "dumbledore", "snape", "voldemort", "luna", "neville", "sirius", "bellatrix",
-    "frodo", "gandalf", "aragorn", "legolas", "gimli", "boromir", "sam", "merry", "pippin", "sauron",
-    "jon", "sansa", "arya", "bran", "tyrion", "daenerys", "cersei", "jaime", "theon", "brienne", "robin", "misbah",
-    "hartono", "supriyadi", "sukarton", "sumanto", "sulastri", "sukris", "rusdi", "amba", "narji", "sudarsono",
-    "suhendro", "sumiyati", "jarwo", "sutik", "suharto", "anfal", "niki", "abil", "rafi", "aqil", "suli", "asep", "conis",
-    "reinhard", "sinaga", "yotsuba", "nagomi", "ririsa", "amano", "kaori", "gojo", "venti", "jean", "mona", "lisa",
-    "kamaru", "norman", "yakovlev", "pavel", "mikail", "alisa", "mikhailovna", "kujou", "yuki", "suou",
-    "masha", "kuze", "alya", "furina", "neuvillete", "nopal", "navia", "herta", "nahida", "nadia", "solikin", "yanto",
-    "nur", "nurjannah", "jannah", "fatihuddin", "munawwir", "somad", "somat", "nurhadi", "hadi", "elsyafa",
-    "andre", "maulaana", "ade", "saputra", "safitri", "misbahulharun", "harun", "izza", "azizatul", "zahra"
-    ,"anisya", "aesyah", "krisna", "carly", "reza", "mahendra", "anis", "suprapto", "chizuru", "sora","ainz",
-    "pico","isla","souma","hanto","rudeus", "suryo", "adrian", "handoyo", "salim", "kabul"
-]
+with open('assets/names.json', 'r') as f:
+    NAMES = json.load(f)
+
+if not isinstance(NAMES, list):
+    raise ValueError("File JSON harus list.")
+
+
+POSTFIX_VIRTUAL_MAILBOX = os.getenv("POSTFIX_VIRTUAL_MAILBOX")
+POSTFIX_VIRTUAL_ALIAS = os.getenv("POSTFIX_VIRTUAL_ALIAS")\
 
 
 used_combinations = set()
@@ -96,10 +69,10 @@ class EmailManager:
 
     def create_new_email(self):
         username = self.generate_username()
-        domain = random.choice(list(DOMAINS.keys()))
+        domain = random.choice(DOMAINS)
         new_email = f"{username}@{domain}"
         alias_email = f"{username}@{domain_utama}"
-        self.mailbox_path = f"{DOMAINS[domain]['mail_dir']}/{username}"
+        self.mailbox_path = f"/var/mail/vhosts/{domain_utama}/{username}"
         
         try:
             os.makedirs(f"{self.mailbox_path}/new", exist_ok=True)
@@ -135,9 +108,12 @@ def index():
     if domain not in DOMAINS:
         return "Domain not supported", 404
     
-    return render_template(DOMAINS[domain]["template"], 
+    return render_template("index.html", 
                          email=session.get('current_email'),
-                         generated_time=session.get('generated_time'))
+                         generated_time=session.get('generated_time'),
+                         web_title=os.getenv("WEB_TITLE"),
+                         web_slogan=os.getenv("WEB_SLOGAN"),
+                         refresh_interval=os.getenv("WEB_REFRESH_INTERVAL"))
 
 @app.route('/generate', methods=['POST'])
 def generate_email():
@@ -163,7 +139,7 @@ def get_emails():
     try:
         username = session['current_email'].split('@')[0]
         domain = session['current_email'].split('@')[1]
-        mail_path = f"{DOMAINS[domain]['mail_dir']}/{username}"
+        mail_path = f"/var/mail/vhosts/{domain_utama}/{username}"
         
         mbox = mailbox.Maildir(mail_path, factory=lambda f: mailbox.MaildirMessage(f))
         emails = []
@@ -201,4 +177,9 @@ def extract_body(msg):
     return body
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=80)
+    if use_ssl == "true":
+        context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
+        context.load_cert_chain('ssl/cert.pem', 'ssl/key.pem')
+        app.run(host='0.0.0.0', port=443, ssl_context=context)
+    else:
+        app.run(host='0.0.0.0', port=80)

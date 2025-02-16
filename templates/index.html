@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>SilverMail</title>
+    <title>{{web_title}}</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -162,8 +162,8 @@
 </head>
 <body>
     <div class="header">
-        <h1>📧 SilverMail</h1>
-        <p>Layanan Email Sementara</p>
+        <h1>{{web_title}}</h1>
+        <p>{{web_slogan}}</p>
     </div>
     
     <div class="email-box">
@@ -190,11 +190,11 @@
     <div id="emails-container"></div>
 
     <div class="watermark">
-        Created by AHA-NG
+        Created by <a href="http://github.com/aha-ng">aha-ng</a>
     </div>
 
     <script>
-        let refreshInterval = 2000;
+        let refreshInterval = "{{refresh_interval}}";
         let refreshTimer = null;
         
         function updateEmailDisplay(email, time) {
@@ -323,9 +323,9 @@
             try {
                 textarea.select();
                 document.execCommand('copy');
-                showFeedback('📋 Kata pertama berhasil disalin: ' + firstWord);
+                showFeedback('📋 berhasil disalin: ' + firstWord);
             } catch (err) {
-                showFeedback('❌ Gagal menyalin kata pertama', true);
+                showFeedback('❌ Gagal menyalin', true);
             } finally {
                 document.body.removeChild(textarea);
             }
