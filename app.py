@@ -7,6 +7,7 @@ import ssl
 from dotenv import load_dotenv
 from datetime import datetime
 from flask import Flask, render_template, session, jsonify, request
+from collections import defaultdict
 
 load_dotenv()
 
@@ -164,6 +165,20 @@ def get_emails():
     except Exception as e:
         app.logger.error(f"Mailbox error: {str(e)}")
         return jsonify([])
+    
+@app.route('/stats')
+def get_stats():
+    directory = '/var/mail/vhosts/silvermail.eula.my.id'
+    user_email_count = count_emails_per_user(directory)
+    
+    # Count how many users have 2 emails and how many have 3 emails
+    count_2_emails = sum(1 for count in user_email_count.values() if count == 2)
+    count_3_emails = sum(1 for count in user_email_count.values() if count == 3)
+    
+    return jsonify({
+        'berhasil': count_2_emails,
+        'gagal': count_3_emails
+    })
 
 def extract_body(msg): 
     body = ""
@@ -175,6 +190,21 @@ def extract_body(msg):
     else:
         body = msg.get_payload(decode=True).decode(errors='replace')
     return body
+
+def count_emails_per_user(directory):
+    user_email_count = defaultdict(int)
+    
+    # Iterate through all files in the directory
+    for filename in os.listdir(directory):
+        if os.path.isfile(os.path.join(directory, filename)):
+            # Assuming the filename is the username
+            user = filename
+            # Count the number of emails (lines) in the file
+            with open(os.path.join(directory, filename), 'r') as file:
+                email_count = sum(1 for line in file)
+            user_email_count[user] = email_count
+    
+    return user_email_count
 
 if __name__ == '__main__':
     if use_ssl == "true":

@@ -4,193 +4,502 @@
     <title>{{web_title}}</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #2196F3;
-            --background-color: #f5f5f5;
+            --primary-purple: #8B7EC8;
+            --secondary-purple: #B4A7D6;
+            --accent-purple: #6B5B95;
+            --dark-purple: #4A4458;
+            --light-purple: #D4C5E8;
+            --cyber-blue: #00D4FF;
+            --cyber-pink: #FF6B9D;
+            --bg-dark: #0F0F23;
+            --bg-darker: #0A0A1F;
+            --surface: #1A1A2E;
+            --surface-light: #16213E;
+            --text-primary: #E4E4E7;
+            --text-secondary: #A1A1AA;
+            --glow-purple: rgba(139, 126, 200, 0.3);
+            --glow-blue: rgba(0, 212, 255, 0.3);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
         
         body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            max-width: 1000px;
+            font-family: 'Rajdhani', sans-serif;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-darker) 50%, var(--dark-purple) 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* Cyberpunk Grid Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(139, 126, 200, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(139, 126, 200, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -2;
+            animation: gridPulse 4s ease-in-out infinite alternate;
+        }
+        
+        /* Floating particles */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 50%, rgba(139, 126, 200, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 80%, rgba(255, 107, 157, 0.1) 0%, transparent 50%);
+            z-index: -1;
+            animation: floatParticles 8s ease-in-out infinite alternate;
+        }
+        
+        @keyframes gridPulse {
+            0% { opacity: 0.3; }
+            100% { opacity: 0.6; }
+        }
+        
+        @keyframes floatParticles {
+            0% { transform: translateY(0px) rotate(0deg); }
+            100% { transform: translateY(-20px) rotate(5deg); }
+        }
+        
+        .container {
+            max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
-            background: #fafafa;
+            position: relative;
+            z-index: 1;
         }
         
         .header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        .header h1 {
+            font-family: 'Orbitron', monospace;
+            font-size: 3.5rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, var(--primary-purple), var(--cyber-blue), var(--secondary-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px var(--glow-purple);
+            margin-bottom: 10px;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+        
+        .header p {
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+            font-weight: 300;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        
+        @keyframes titleGlow {
+            0% { text-shadow: 0 0 30px var(--glow-purple); }
+            100% { text-shadow: 0 0 50px var(--glow-blue), 0 0 70px var(--glow-purple); }
+        }
+        
+        .email-box, .email {
+            background: linear-gradient(135deg, var(--surface) 0%, var(--surface-light) 100%);
+            border: 1px solid rgba(139, 126, 200, 0.3);
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+            margin: 25px 0;
+            backdrop-filter: blur(10px);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        
+        .email-box::before, .email::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(139, 126, 200, 0.1), transparent);
+            animation: shimmer 3s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
         }
         
         .email-box {
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-            margin: 20px 0;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 30px;
         }
         
         .email {
-            background: white;
-            padding: 20px;
+            padding: 25px;
+            border-left: 4px solid var(--primary-purple);
+            position: relative;
+        }
+        
+        .current-email {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--cyber-blue);
+            background: rgba(0, 212, 255, 0.1);
+            padding: 15px 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 212, 255, 0.3);
             margin: 15px 0;
-            border-radius: 8px;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-            border-left: 4px solid var(--primary-color);
+            text-align: center;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
+            animation: emailPulse 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes emailPulse {
+            0% { box-shadow: 0 0 20px rgba(0, 212, 255, 0.2); }
+            100% { box-shadow: 0 0 30px rgba(0, 212, 255, 0.4), 0 0 40px rgba(139, 126, 200, 0.2); }
         }
         
         button {
-            background: var(--primary-color);
-            color: white;
-            padding: 12px 24px;
+            background: linear-gradient(45deg, var(--primary-purple), var(--accent-purple));
+            color: var(--text-primary);
+            padding: 15px 30px;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
             font-size: 16px;
-            transition: all 0.3s;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            margin: 5px;
+            font-family: 'Rajdhani', sans-serif;
+            border: 1px solid rgba(139, 126, 200, 0.5);
+        }
+        
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
         }
         
         button:hover {
-            background: #1976D2;
-            transform: translateY(-1px);
+            transform: translateY(-2px);
+            box-shadow: 
+                0 10px 20px rgba(139, 126, 200, 0.3),
+                0 0 30px rgba(139, 126, 200, 0.2);
+            background: linear-gradient(45deg, var(--secondary-purple), var(--primary-purple));
         }
         
-        .email-body {
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 6px;
-            margin-top: 15px;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 14px;
+        button:hover::before {
+            left: 100%;
         }
         
-        .refresh-info {
-            color: #666;
-            font-size: 0.9em;
-            margin-top: 10px;
+        button:active {
+            transform: translateY(0);
         }
         
         .copy-btn {
-            background: #4CAF50;
-            color: white;
-            padding: 8px 16px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
+            background: linear-gradient(45deg, var(--cyber-blue), #0099CC);
             font-size: 14px;
-            margin-left: 10px;
-            transition: all 0.3s;
+            padding: 10px 20px;
         }
         
         .copy-btn:hover {
-            background: #45a049;
+            background: linear-gradient(45deg, #00AADD, var(--cyber-blue));
+            box-shadow: 0 5px 15px rgba(0, 212, 255, 0.4);
+        }
+        
+        .subject-copy-btn {
+            background: linear-gradient(45deg, var(--cyber-pink), #DD5588);
+            font-size: 12px;
+            padding: 8px 15px;
+            vertical-align: middle;
+            margin-left: 10px;
+        }
+        
+        .subject-copy-btn:hover {
+            background: linear-gradient(45deg, #FF77AA, var(--cyber-pink));
+            box-shadow: 0 5px 15px rgba(255, 107, 157, 0.4);
+        }
+        
+        .email-body {
+            background: rgba(15, 15, 35, 0.6);
+            border: 1px solid rgba(139, 126, 200, 0.2);
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+        
+        .refresh-info {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            margin-top: 15px;
+            text-align: center;
+            font-weight: 300;
+            opacity: 0.8;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 25px;
         }
         
         .watermark {
             text-align: center;
-            margin-top: 40px;
-            color: #888;
+            margin-top: 50px;
+            color: var(--text-secondary);
             font-size: 0.9em;
-        }
-
-        .subject-copy-btn {
-            background: #ff9800;
-            color: white;
-            padding: 5px 10px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 12px;
-            margin-left: 8px;
-            vertical-align: middle;
-            transition: all 0.3s;
-        }
-
-        .subject-copy-btn:hover {
-            background: #f57c00;
-        }
-
-        .subject-copy-btn i {
-            margin-right: 5px;
+            opacity: 0.6;
         }
         
-        @media (max-width: 600px) {
-            body {
-                padding: 10px;
+        .watermark a {
+            color: var(--primary-purple);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .watermark a:hover {
+            color: var(--cyber-blue);
+            text-shadow: 0 0 10px var(--glow-blue);
+        }
+        
+        .section-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--secondary-purple);
+            margin: 40px 0 20px 0;
+            text-align: center;
+            position: relative;
+        }
+        
+        .section-title::before,
+        .section-title::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 50px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary-purple), transparent);
+        }
+        
+        .section-title::before {
+            left: -70px;
+        }
+        
+        .section-title::after {
+            right: -70px;
+        }
+        
+        .email h3 {
+            color: var(--cyber-blue);
+            font-family: 'Orbitron', monospace;
+            font-weight: 600;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+        
+        .email p {
+            margin: 8px 0;
+            font-weight: 400;
+        }
+        
+        .email strong {
+            color: var(--primary-purple);
+            font-weight: 600;
+        }
+        
+        /* Feedback notification */
+        .feedback {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            font-weight: 600;
+            border: 1px solid;
+            backdrop-filter: blur(10px);
+            animation: slideInRight 0.3s ease-out;
+        }
+        
+        .feedback.success {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(139, 126, 200, 0.1));
+            color: var(--cyber-blue);
+            border-color: rgba(0, 212, 255, 0.3);
+        }
+        
+        .feedback.error {
+            background: linear-gradient(135deg, rgba(255, 107, 157, 0.1), rgba(255, 0, 100, 0.1));
+            color: var(--cyber-pink);
+            border-color: rgba(255, 107, 157, 0.3);
+        }
+        
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .email-box {
+                padding: 20px;
+            }
+            
+            .current-email {
+                font-size: 1.4rem;
+                padding: 12px 15px;
+            }
+            
+            button {
+                width: 100%;
+                margin: 8px 0;
+                padding: 12px 20px;
+            }
+            
+            .copy-btn, .subject-copy-btn {
+                width: auto;
+                margin: 5px;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .section-title::before,
+            .section-title::after {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .header p {
+                font-size: 1rem;
+            }
+            
+            .current-email {
+                font-size: 1.2rem;
+                word-break: break-all;
             }
             
             .email-box {
                 padding: 15px;
             }
             
-            button {
-                width: 100%;
-                margin-bottom: 10px;
+            .email {
+                padding: 15px;
             }
-            
-            .copy-btn {
-                width: auto;
-                margin-left: 0;
-                margin-top: 10px;
-            }
-            
-            .subject-copy-btn {
-                background: #ff9800;
-                color: white;
-                padding: 5px 10px;
-                border: none;
-                border-radius: 4px;
-                cursor: pointer;
-                font-size: 12px;
-                margin-left: 8px;
-                vertical-align: middle;
-                transition: all 0.3s;
-            }
-
-            .subject-copy-btn:hover {
-                background: #f57c00;
-            }
-
-            .subject-copy-btn i {
-                margin-right: 5px;
-            }
+        }
+        
+        /* Loading animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(139, 126, 200, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary-purple);
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>{{web_title}}</h1>
-        <p>{{web_slogan}}</p>
-    </div>
-    
-    <div class="email-box">
-        <div id="email-display">
-            {% if email %}
-                <h2>Email Sementara Anda:</h2>
-                <div class="current-email" id="current-email">{{ email }}</div>
-                <br>
-                <button class="copy-btn" onclick="copyEmail()"><i class="fas fa-copy"></i> Salin Email</button>
-                <p>Dibuat pada: <span id="generated-time">{{ generated_time }}</span></p>
-            {% else %}
-                <p>Tidak ada alamat email aktif. Buat sekarang!</p>
-            {% endif %}
+    <div class="container">
+        <div class="header">
+            <h1>{{web_title}}</h1>
+            <p>{{web_slogan}}</p>
         </div>
         
-        <div class="controls">
-            <button id="generate-btn">Buat Email Baru</button>
-            <button id="refresh-btn">Muat Ulang Manual</button>
+        <div class="email-box">
+            <div id="email-display">
+                {% if email %}
+                    <h2>🌐 Current Active Terminal:</h2>
+                    <div class="current-email" id="current-email">{{ email }}</div>
+                    <div style="text-align: center; margin: 20px 0;">
+                        <button class="copy-btn" onclick="copyEmail()"><i class="fas fa-copy"></i> Clone Address</button>
+                        <button class="copy-btn" onclick="copyEmailUsername('{{ email }}')"><i class="fas fa-user"></i> Extract ID</button>
+                    </div>
+                    <p style="text-align: center; color: var(--text-secondary);">Initialized: <span id="generated-time">{{ generated_time }}</span></p>
+                {% else %}
+                    <p style="text-align: center; font-size: 1.2rem;">🔌 No active terminal detected. Initialize now!</p>
+                {% endif %}
+            </div>
+            
+            <div class="controls">
+                <button id="generate-btn"><i class="fas fa-terminal"></i> Initialize New Terminal</button>
+                <button id="refresh-btn"><i class="fas fa-sync-alt"></i> Force Refresh</button>
+            </div>
+            <p class="refresh-info">⚡ Auto-sync every 2 seconds | Quantum encrypted connection</p>
         </div>
-        <p class="refresh-info">Muat ulang otomatis setiap 2 detik...</p>
-    </div>
 
-    <h2>📨 Email Masuk:</h2>
-    <div id="emails-container"></div>
+        <h2 class="section-title">📨 Incoming Transmissions</h2>
+        <div id="emails-container"></div>
 
-    <div class="watermark">
-        Created by <a href="http://github.com/aha-ng">aha-ng</a>
+        <div class="watermark">
+            <p>Created With ❤️ for Silver Wolf</p>
+            Silver Wolf punya saya, jangan kamu klaim!
+        </div>
     </div>
 
     <script>
@@ -199,70 +508,77 @@
         
         function updateEmailDisplay(email, time) {
             const emailHtml = `
-                <h2>Email Sementara Anda:</h2>
+                <h2>🌐 Current Active Terminal:</h2>
                 <div class="current-email" id="current-email">${email}</div>
-                <button class="copy-btn" onclick="copyEmail()"><i class="fas fa-copy"></i> Salin Email</button>
-                <p>Dibuat pada: <span id="generated-time">${time}</span></p>
+                <div style="text-align: center; margin: 20px 0;">
+                    <button class="copy-btn" onclick="copyEmail()"><i class="fas fa-copy"></i> Clone Address</button>
+                    <button class="copy-btn" onclick="copyEmailUsername('${email}')"><i class="fas fa-user"></i> Extract ID</button>
+                </div>
+                <p style="text-align: center; color: var(--text-secondary);">Initialized: <span id="generated-time">${time}</span></p>
             `;
             $('#email-display').html(emailHtml);
         }
 
-        function copyEmail() {
-            const email = $('#current-email').text().trim();
-            
-            // Fallback method untuk browser lama
-            const textarea = document.createElement('textarea');
-            textarea.value = email;
-            document.body.appendChild(textarea);
-            
-            try {
-                // Method modern
-                if(navigator.clipboard) {
-                    navigator.clipboard.writeText(email).then(() => {
-                        showFeedback('📋 Email berhasil disalin!');
-                    }).catch(err => {
-                        useFallbackCopy(textarea);
-                    });
-                } else {
-                    useFallbackCopy(textarea);
-                }
-            } catch (err) {
-                useFallbackCopy(textarea);
-            } finally {
-                document.body.removeChild(textarea);
+        function copyToClipboard(text) {
+            // Modern browser method
+            if (navigator.clipboard && window.isSecureContext) {
+                return navigator.clipboard.writeText(text);
+            } else {
+                // Fallback method
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                textarea.style.position = 'fixed';
+                textarea.style.left = '-999999px';
+                textarea.style.top = '-999999px';
+                document.body.appendChild(textarea);
+                textarea.focus();
+                textarea.select();
+                
+                return new Promise((resolve, reject) => {
+                    try {
+                        document.execCommand('copy');
+                        resolve();
+                    } catch (err) {
+                        reject(err);
+                    } finally {
+                        document.body.removeChild(textarea);
+                    }
+                });
             }
         }
 
-        function useFallbackCopy(element) {
-            element.select();
-            try {
-                document.execCommand('copy');
-                showFeedback('📋 Email berhasil disalin (fallback)!');
-            } catch (err) {
-                showFeedback('❌ Gagal menyalin email', true);
-            }
+        function copyEmail() {
+            const email = $('#current-email').text().trim();
+            copyToClipboard(email)
+                .then(() => showFeedback('🔗 Terminal address cloned successfully!'))
+                .catch(() => showFeedback('❌ Clone operation failed', true));
+        }
+
+        function copyEmailUsername(email) {
+            const match = email.match(/[a-zA-Z]+(?=\d)/);
+            const emailUsername = match ? match[0] : '';
+            
+            copyToClipboard(emailUsername)
+                .then(() => showFeedback('👤 ID extracted: ' + emailUsername))
+                .catch(() => showFeedback('❌ Extraction failed', true));
+        }
+
+        function copyFirstWord(subject) {
+            const firstWord = subject.trim().split(/\s+/)[0] || '';
+            copyToClipboard(firstWord)
+                .then(() => showFeedback('🔐 Code extracted: ' + firstWord))
+                .catch(() => showFeedback('❌ Extraction failed', true));
         }
 
         function showFeedback(message, isError = false) {
             const feedback = document.createElement('div');
-            feedback.style = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                padding: 15px;
-                background: ${isError ? '#ff4444' : '#4CAF50'};
-                color: white;
-                border-radius: 5px;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-                z-index: 1000;
-                animation: slideIn 0.3s ease-out;
-            `;
+            feedback.className = `feedback ${isError ? 'error' : 'success'}`;
             feedback.textContent = message;
             
             document.body.appendChild(feedback);
             setTimeout(() => {
                 feedback.remove();
-            }, 3000);
+            }, 3500);
         }
 
         let storedEmails = [];
@@ -276,11 +592,10 @@
                     if (emails.length > 0) {
                         storedEmails = emails;
                     }
-                    
                     renderEmails();
                 },
                 error: function(xhr) {
-                    console.error('Error loading emails:', xhr.statusText);
+                    console.error('Network error:', xhr.statusText);
                     renderEmails();
                 }
             });
@@ -291,22 +606,22 @@
             
             if (storedEmails.length === 0) {
                 $('#emails-container').append(
-                    '<div class="email">Belum ada email yang diterima</div>'
+                    '<div class="email">📡 No incoming transmissions detected...</div>'
                 );
             } else {
                 storedEmails.forEach(function(email) {
                     const emailHtml = `
                         <div class="email" data-id="${email.id}">
                             <h3>
-                                ${email.subject}
-                                <button class="subject-copy-btn" onclick="copyFirstWord('${email.subject.replace(/'/g, "\\'")}')">
-                                    <i class="fas fa-copy"></i> Salin Kode Verifikasi
+                                🔮 ${email.subject || 'Encrypted Message'}
+                                <button class="subject-copy-btn" onclick="copyFirstWord('${(email.subject || '').replace(/'/g, "\\'")}')">
+                                    <i class="fas fa-key"></i> Extract Code
                                 </button>
                             </h3>
-                            <p><strong>Dari:</strong> ${email.from}</p>
-                            <p><strong>Tanggal:</strong> ${email.date}</p>
+                            <p><strong>🌟 Source:</strong> ${email.from || 'Anonymous'}</p>
+                            <p><strong>⏰ Timestamp:</strong> ${email.date || 'Unknown'}</p>
                             <div class="email-body">
-                                ${email.body.replace(/</g, '&lt;').replace(/>/g, '&gt;')}
+${(email.body || 'Message content encrypted...').replace(/</g, '&lt;').replace(/>/g, '&gt;')}
                             </div>
                         </div>`;
                     $('#emails-container').append(emailHtml);
@@ -314,24 +629,11 @@
             }
         }
 
-        function copyFirstWord(subject) {
-            const firstWord = subject.trim().split(/\s+/)[0] || '';
-            const textarea = document.createElement('textarea');
-            textarea.value = firstWord;
-            document.body.appendChild(textarea);
-            
-            try {
-                textarea.select();
-                document.execCommand('copy');
-                showFeedback('📋 berhasil disalin: ' + firstWord);
-            } catch (err) {
-                showFeedback('❌ Gagal menyalin', true);
-            } finally {
-                document.body.removeChild(textarea);
-            }
-        }
-
         $('#generate-btn').click(function() {
+            const btn = $(this);
+            const originalHtml = btn.html();
+            btn.html('<i class="fas fa-cog fa-spin"></i> Initializing...').prop('disabled', true);
+            
             $.ajax({
                 url: '/generate',
                 method: 'POST',
@@ -339,32 +641,49 @@
                     if(response.email) {
                         updateEmailDisplay(response.email, new Date().toLocaleString());
                         sessionStorage.setItem('currentEmail', response.email);
-                        loadEmails(); // Paksa refresh langsung
+                        showFeedback('🚀 New terminal initialized successfully!');
+                        setTimeout(() => loadEmails(), 500);
                     }
                 },
                 error: function(xhr) {
-                    alert('Gagal membuat email: ' + xhr.responseJSON.error);
+                    const errorMsg = xhr.responseJSON ? xhr.responseJSON.error : 'Unknown error';
+                    showFeedback('⚠️ Initialization failed: ' + errorMsg, true);
+                },
+                complete: function() {
+                    btn.html(originalHtml).prop('disabled', false);
                 }
             });
         });
 
         $('#refresh-btn').click(function() {
+            const btn = $(this);
+            const originalHtml = btn.html();
+            btn.html('<i class="fas fa-sync-alt fa-spin"></i> Syncing...').prop('disabled', true);
+            
             clearInterval(refreshTimer);
             loadEmails();
             refreshTimer = setInterval(loadEmails, refreshInterval);
+            
+            setTimeout(() => {
+                btn.html(originalHtml).prop('disabled', false);
+                showFeedback('🔄 Data synchronized');
+            }, 1000);
         });
 
-        // Inisialisasi
+        // Initialize
         $(document).ready(function() {
-            // Ambil email dari session jika ada
             const savedEmail = "{{ email }}";
             if(savedEmail) {
                 updateEmailDisplay(savedEmail, "{{ generated_time }}");
             }
             
-            // Auto-refresh
             refreshTimer = setInterval(loadEmails, refreshInterval);
             loadEmails();
+            
+            // Add some startup flavor
+            setTimeout(() => {
+                showFeedback('🌐 Quantum network connected');
+            }, 1000);
         });
     </script>
 </body>

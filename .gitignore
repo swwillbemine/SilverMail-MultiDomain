@@ -1,2 +1,6 @@
+.gitignore
 .env
 mydomain.txt
+templates/old_index.html
+readme_old.md
+templates/indexv2.html
