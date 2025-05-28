@@ -176,21 +176,25 @@ sudo systemctl enable postfix
 
 ### Step 9: Deploy Web Interface
 1. **Configure Environment**: Edit `.env` file with your settings
+```bash
+cd SilverMail-MultiDomain
+cp example.env .env
+nano .env
+```
 2. **Set Domains**: Edit `assets/domains.json` (first domain = primary domain)
 3. **Install Dependencies**:
 ```bash
 sudo apt install python3-pip -y
 pip3 install -r requirements.txt
 ```
-
-4. **Launch Server**:
+4. **Launch Server (If not use Auto-Start)**:
 ```bash
 gunicorn app:app -b 0.0.0.0:80 -w 4 --preload
 ```
 
 ---
 
-## 🔄 Auto-Start Configuration
+## 🔄 Auto-Start Configuration (Recomended)
 
 ### Create System Service
 ```bash
